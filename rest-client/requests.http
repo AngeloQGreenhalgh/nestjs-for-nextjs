@@ -6,7 +6,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "user@email.com",
+  "email": "angeloqg@email.com",
   "password": "123456"
 }
 
@@ -21,8 +21,8 @@ POST {{baseUrl}}/user
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john1@email.com",
+  "name": "Angelo Quintarelli Greenhalgh",
+  "email": "angeloqg@email.com",
   "password": "123456"
 }
 

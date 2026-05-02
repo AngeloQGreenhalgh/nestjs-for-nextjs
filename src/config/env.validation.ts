@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import * as Joi from 'joi';
 
 // Aqui ficam as REGRAS que você já tinha definido
@@ -20,6 +21,9 @@ export const envSchema = Joi.object({
   DB_DATABASE: Joi.string().default('./db.sqlite'),
   DB_SYNCHRONIZE: Joi.string().valid('0', '1').default('0'),
   DB_AUTO_LOAD_ENTITIES: Joi.string().valid('0', '1').default('0'),
+
+  JWT_SECRET: Joi.string().required(),
+  JWT_EXPIRATION: Joi.string().default('1d'),
 });
 
 // Aqui fica a TRATATIVA de erro genérica
@@ -30,13 +34,28 @@ export function validateEnv(config: Record<string, any>) {
   });
 
   if (error) {
+    // 1. Procuramos se algum dos erros é relacionado ao JWT
+    const isJwtError = error.details.some(
+      detail =>
+        detail.path.includes('JWT_SECRET') ||
+        detail.path.includes('JWT_EXPIRATION'),
+    );
+
+    // 2. Mostramos o log decorado (que você gostou)
     console.error('\n❌ --- ERRO DE CONFIGURAÇÃO ---');
     error.details.forEach(detail => {
       console.error(` • ${detail.message}`);
     });
     console.error('-------------------------------\n');
 
-    // Em vez de throw new Error(...), usamos:
+    // 3. Se for erro de JWT, lançamos a Exception do professor
+    if (isJwtError) {
+      throw new InternalServerErrorException(
+        'Configuração do JWT inválida no .env',
+      );
+    }
+
+    // 4. Para os demais casos (Banco, etc), apenas paramos o app de forma limpa
     process.exit(1);
   }
 
