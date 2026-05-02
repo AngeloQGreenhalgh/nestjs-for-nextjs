@@ -36,8 +36,8 @@ import Joi from 'joi';
         }),
 
         DB_DATABASE: Joi.string().default('./db.sqlite'),
-        DB_SYNCRONIZE: Joi.string().valid('0', '1').default('0'),
-        DB_AUTOLOAD_ENTITIES: Joi.string().valid('0', '1').default('0'),
+        DB_SYNCHRONIZE: Joi.string().valid('0', '1').default('0'),
+        DB_AUTO_LOAD_ENTITIES: Joi.string().valid('0', '1').default('0'),
       }),
     }),
 
@@ -49,9 +49,9 @@ import Joi from 'joi';
           return {
             type: 'better-sqlite3',
             database: config.get<string>('DB_DATABASE'),
-            synchronize: config.get<string>('DB_SYNCRONIZE') === '1',
+            synchronize: config.get<string>('DB_SYNCHRONIZE') === '1',
             autoLoadEntities:
-              config.get<string>('DB_AUTOLOAD_ENTITIES') === '1',
+              config.get<string>('DB_AUTO_LOAD_ENTITIES') === '1',
           };
         }
 
@@ -62,8 +62,8 @@ import Joi from 'joi';
           username: config.get<string>('DB_USERNAME'),
           password: config.get<string>('DB_PASSWORD'),
           database: config.get<string>('DB_DATABASE'),
-          synchronize: config.get<string>('DB_SYNCRONIZE') === '1',
-          autoLoadEntities: config.get<string>('DB_AUTOLOAD_ENTITIES') === '1',
+          synchronize: config.get<string>('DB_SYNCHRONIZE') === '1',
+          autoLoadEntities: config.get<string>('DB_AUTO_LOAD_ENTITIES') === '1',
         };
       },
     }),
