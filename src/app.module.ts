@@ -7,6 +7,7 @@ import { PostModule } from './post/post.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
+import { validateEnv } from './config/env.validation';
 
 @Module({
   imports: [
@@ -15,30 +16,7 @@ import Joi from 'joi';
     PostModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: Joi.object({
-        DB_TYPE: Joi.string()
-          .valid('better-sqlite3', 'postgres')
-          .default('better-sqlite3'),
-
-        DB_HOST: Joi.string().default('localhost'),
-        DB_PORT: Joi.number().default(5432),
-
-        DB_USER: Joi.string().when('DB_TYPE', {
-          is: 'postgres',
-          then: Joi.required(),
-          otherwise: Joi.optional(),
-        }),
-
-        DB_PASSWORD: Joi.string().when('DB_TYPE', {
-          is: 'postgres',
-          then: Joi.required(),
-          otherwise: Joi.optional(),
-        }),
-
-        DB_DATABASE: Joi.string().default('./db.sqlite'),
-        DB_SYNCHRONIZE: Joi.string().valid('0', '1').default('0'),
-        DB_AUTO_LOAD_ENTITIES: Joi.string().valid('0', '1').default('0'),
-      }),
+      validate: validateEnv,
     }),
 
     TypeOrmModule.forRootAsync({
