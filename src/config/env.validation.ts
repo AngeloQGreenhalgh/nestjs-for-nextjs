@@ -21,7 +21,6 @@ export const envSchema = Joi.object({
   DB_DATABASE: Joi.string().default('./db.sqlite'),
   DB_SYNCHRONIZE: Joi.string().valid('0', '1').default('0'),
   DB_AUTO_LOAD_ENTITIES: Joi.string().valid('0', '1').default('0'),
-
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRATION: Joi.string().default('1d'),
 });
@@ -48,7 +47,7 @@ export function validateEnv(config: Record<string, any>) {
     });
     console.error('-------------------------------\n');
 
-    // 3. Se for erro de JWT, lançamos a Exception do professor
+    // 3. Se for erro de JWT, lançamos a Exception
     if (isJwtError) {
       throw new InternalServerErrorException(
         'Configuração do JWT inválida no .env',
