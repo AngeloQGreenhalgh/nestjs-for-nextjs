@@ -31,9 +31,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
     };
-    const accessToken = await this.jwtService.signAsync({
-      jwtPayload,
-    });
+    const accessToken = await this.jwtService.signAsync(jwtPayload);
 
     user.forceLogout = false;
 

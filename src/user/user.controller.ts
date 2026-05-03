@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -12,8 +13,11 @@ import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import type { Request } from 'express';
 import type { AuthenticatedRequest } from '../auth/types/authenticated-request';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+
 @Controller('user')
 export class UserController {
   constructor(
@@ -34,8 +38,25 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() dto: CreateUserDto) {
-    // Lógica para criar um usuário usando o dto e a secretKey
-    return this.userService.create(dto);
+  async create(@Body() dto: CreateUserDto) {
+    const user = await this.userService.create(dto);
+    return new UserResponseDto(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  async update(@Req() req: AuthenticatedRequest, @Body() dto: UpdateUserDto) {
+    const user = await this.userService.update(req.user.id, dto);
+    return new UserResponseDto(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/password')
+  async updatePassword(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: UpdatePasswordDto,
+  ) {
+    const user = await this.userService.updatePassword(req.user.id, dto);
+    return new UserResponseDto(user);
   }
 }
