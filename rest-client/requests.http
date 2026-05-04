@@ -23,8 +23,8 @@ POST {{baseUrl}}/user
 Content-Type: application/json
 
 {
-  "name": "Maria",
-  "email": "maria@email.com",
+  "name": "Luiz",
+  "email": "luiz@email.com",
   "password": "123456"
 }
 
@@ -51,3 +51,14 @@ Authorization: Bearer {{jwtToken}}
   "currentPassword": "123456",
   "newPassword": "123456"
 }
+
+
+### Read one user
+# @name readOneUser
+GET {{baseUrl}}/user/me
+Authorization: Bearer {{jwtToken}}
+
+### Delete user
+# @name deleteUUser
+DELETE {{baseUrl}}/user/me
+Authorization: Bearer {{jwtToken}}

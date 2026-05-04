@@ -1,14 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
-  Param,
   Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CustomParseIntPipe } from '../common/pipes/custom-parse-int-parse.pipe';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
@@ -17,6 +16,7 @@ import type { AuthenticatedRequest } from '../auth/types/authenticated-request';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
@@ -25,16 +25,12 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
+  @ApiBearerAuth('token')
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  findOne(
-    @Req() req: AuthenticatedRequest,
-    @Param('id', CustomParseIntPipe)
-    id: number,
-  ): string {
-    console.log(req.user.id);
-    console.log(req.user.email);
-    return `Olá controller do user #${id}`;
+  @Get('me')
+  async findOne(@Req() req: AuthenticatedRequest) {
+    const user = await this.userService.finOneByOrFail({ id: req.user.id });
+    return new UserResponseDto(user);
   }
 
   @Post()
@@ -43,6 +39,7 @@ export class UserController {
     return new UserResponseDto(user);
   }
 
+  @ApiBearerAuth('token')
   @UseGuards(JwtAuthGuard)
   @Patch('me')
   async update(@Req() req: AuthenticatedRequest, @Body() dto: UpdateUserDto) {
@@ -50,6 +47,7 @@ export class UserController {
     return new UserResponseDto(user);
   }
 
+  @ApiBearerAuth('token')
   @UseGuards(JwtAuthGuard)
   @Patch('me/password')
   async updatePassword(
@@ -57,6 +55,14 @@ export class UserController {
     @Body() dto: UpdatePasswordDto,
   ) {
     const user = await this.userService.updatePassword(req.user.id, dto);
+    return new UserResponseDto(user);
+  }
+
+  @ApiBearerAuth('token')
+  @UseGuards(JwtAuthGuard)
+  @Delete('me')
+  async remove(@Req() req: AuthenticatedRequest) {
+    const user = await this.userService.remove(req.user.id);
     return new UserResponseDto(user);
   }
 }
