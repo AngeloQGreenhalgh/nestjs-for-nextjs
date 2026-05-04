@@ -10,6 +10,18 @@ async function bootstrap() {
     .setTitle('Minha API NestJS')
     .setDescription('Descrição da API para meu projeto de estudo')
     .setVersion('1.0')
+    // Adiciona a definição do esquema de segurança
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT', // Opcional, apenas para documentação
+        name: 'JWT',
+        description: 'Insira o token JWT',
+        in: 'header',
+      },
+      'token', // Este é o nome da referência (key) que usaremos nos controllers
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -46,8 +46,8 @@ import { validateEnv } from './config/env.validation';
       },
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  // controllers: [AppController],
+  // providers: [AppService],
   exports: [],
 })
 export class AppModule {}
