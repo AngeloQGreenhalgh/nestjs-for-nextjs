@@ -4,7 +4,6 @@ import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import Joi from 'joi';
 import { validateEnv } from './config/env.validation';
 
 @Module({
@@ -26,8 +25,10 @@ import { validateEnv } from './config/env.validation';
             type: 'better-sqlite3',
             database: config.get<string>('DB_DATABASE'),
             synchronize: config.get<string>('DB_SYNCHRONIZE') === '1',
+            // Essa opção é ruim pois não aplica mudanças imediatamente no banco de dados
             autoLoadEntities:
               config.get<string>('DB_AUTO_LOAD_ENTITIES') === '1',
+            //entities: [User, Post], // Uso de Autoload Entities
           };
         }
 
