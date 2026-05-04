@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn('uuid')
@@ -34,5 +36,8 @@ export class Post {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // One-to-One relationship with User <- FK para user
+  // OneToMany User -> [Post, Post, Post]
+  // ManyToOne => authorId (User Id Fk)
+  @ManyToOne(() => User)
+  author: User;
 }
