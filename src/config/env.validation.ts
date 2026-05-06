@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import * as Joi from 'joi';
 
-// Aqui ficam as REGRAS que você já tinha definido
+// Mantemos o seu schema como está
 export const envSchema = Joi.object({
   DB_TYPE: Joi.string()
     .valid('better-sqlite3', 'postgres')
@@ -25,38 +25,35 @@ export const envSchema = Joi.object({
   JWT_EXPIRATION: Joi.string().default('1d'),
 });
 
-// Aqui fica a TRATATIVA de erro genérica
-export function validateEnv(config: Record<string, any>) {
+export function validateEnv(config: Record<string, unknown>) {
+  // AJUSTE AQUI: Forçamos o tipo do retorno do Joi para evitar o 'any'
   const { error, value } = envSchema.validate(config, {
     abortEarly: false,
     allowUnknown: true,
-  });
+  }) as { error?: Joi.ValidationError; value: Record<string, unknown> };
 
   if (error) {
-    // 1. Procuramos se algum dos erros é relacionado ao JWT
     const isJwtError = error.details.some(
       detail =>
         detail.path.includes('JWT_SECRET') ||
         detail.path.includes('JWT_EXPIRATION'),
     );
 
-    // 2. Mostramos o log decorado (que você gostou)
     console.error('\n❌ --- ERRO DE CONFIGURAÇÃO ---');
     error.details.forEach(detail => {
       console.error(` • ${detail.message}`);
     });
     console.error('-------------------------------\n');
 
-    // 3. Se for erro de JWT, lançamos a Exception
     if (isJwtError) {
       throw new InternalServerErrorException(
         'Configuração do JWT inválida no .env',
       );
     }
 
-    // 4. Para os demais casos (Banco, etc), apenas paramos o app de forma limpa
     process.exit(1);
   }
 
+  // Agora o retorno é tratado como um Record seguro, não como any
   return value;
 }

@@ -5,6 +5,7 @@ import { PostModule } from './post/post.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { validateEnv } from './config/env.validation';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -44,6 +45,8 @@ import { validateEnv } from './config/env.validation';
         };
       },
     }),
+
+    UploadModule,
   ],
   controllers: [],
   providers: [],

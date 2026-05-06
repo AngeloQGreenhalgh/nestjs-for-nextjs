@@ -27,7 +27,7 @@ export class UserService {
     }
   }
 
-  async finOneByOrFail(userData: Partial<User>) {
+  async findOneByOrFail(userData: Partial<User>) {
     const user = await this.userRepository.findOneBy(userData);
 
     if (!user) {
@@ -65,7 +65,7 @@ export class UserService {
     if (!dto.name && !dto.email) {
       throw new BadRequestException('Dados não enviados');
     }
-    const user = await this.finOneByOrFail({ id });
+    const user = await this.findOneByOrFail({ id });
 
     user.name = dto.name ?? user.name;
 
@@ -80,7 +80,7 @@ export class UserService {
   }
 
   async updatePassword(id: string, dto: UpdatePasswordDto) {
-    const user = await this.finOneByOrFail({ id });
+    const user = await this.findOneByOrFail({ id });
 
     const isCurrentPasswordValid = await this.hashingService.compare(
       dto.currentPassword,
@@ -97,7 +97,7 @@ export class UserService {
   }
 
   async remove(id: string) {
-    const user = await this.finOneByOrFail({ id });
+    const user = await this.findOneByOrFail({ id });
 
     await this.userRepository.delete({ id });
 

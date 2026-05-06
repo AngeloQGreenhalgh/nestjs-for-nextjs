@@ -38,6 +38,6 @@ export class Post {
 
   // OneToMany User -> [Post, Post, Post]
   // ManyToOne => authorId (User Id Fk)
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   author: User;
 }

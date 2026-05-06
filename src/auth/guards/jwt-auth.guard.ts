@@ -1,8 +1,6 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JsonWebTokenError } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { use } from 'passport';
-import { Observable } from 'rxjs';
 
 export class JwtAuthGuard extends AuthGuard('jwt') {
   handleRequest<TUser = any>(

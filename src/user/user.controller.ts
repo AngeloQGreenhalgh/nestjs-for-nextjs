@@ -29,7 +29,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async findOne(@Req() req: AuthenticatedRequest) {
-    const user = await this.userService.finOneByOrFail({ id: req.user.id });
+    const user = await this.userService.findOneByOrFail({ id: req.user.id });
     return new UserResponseDto(user);
   }
 
