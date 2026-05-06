@@ -25,7 +25,25 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // Define a rota /api
+
+  // A rota do swagger está configurada para '/api'
+  SwaggerModule.setup('api', app, document, {
+    explorer: true, // Ativa a barra de busca/exploração superior
+    swaggerOptions: {
+      // Esta configuração faz o Swagger listar o arquivo de contrato na barra superior
+      urls: [
+        {
+          url: '/api-json', // Rota que o NestJS gera automaticamente
+          name: 'V1 - Contrato JSON',
+        },
+        {
+          url: '/api-yaml', // Rota que o NestJS gera automaticamente
+          name: 'V1 - Contrato YAML',
+        },
+      ],
+    },
+    customSiteTitle: 'Documentação API - Ângelo',
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
