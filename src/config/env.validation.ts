@@ -3,6 +3,8 @@ import * as Joi from 'joi';
 
 // Mantemos o seu schema como está
 export const envSchema = Joi.object({
+  APP_PORT: Joi.number().default(3001),
+  CORS_WHITELIST: Joi.string().default('*'),
   DB_TYPE: Joi.string()
     .valid('better-sqlite3', 'postgres')
     .default('better-sqlite3'),

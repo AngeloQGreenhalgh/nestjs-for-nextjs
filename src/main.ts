@@ -2,10 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
+import { ConfigService } from '@nestjs/config';
+import { parseCorsWhitelist } from './common/utils/parse-cors-whitelist';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('APP_PORT') || 3001;
+  const corsWhitelist = configService.get<string>('CORS_WHITELIST') || '';
   const config = new DocumentBuilder()
     .setTitle('Minha API NestJS')
     .setDescription('Descrição da API para meu projeto de estudo')
@@ -45,6 +51,31 @@ async function bootstrap() {
     customSiteTitle: 'Documentação API - Ângelo',
   });
 
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: {
+        policy: 'cross-origin',
+      },
+    }),
+  );
+  const corsWhiteList = parseCorsWhitelist(corsWhitelist);
+
+  app.enableCors({
+    origin: (
+      origin: string | undefined, // Isso é do navegado para proteger o cliente
+      callback: (...args: any[]) => void,
+    ) => {
+      // Requisição sem origin ou que inclui uma origin conhecida
+      // por corsWhitelist é permitida
+      if (!origin || corsWhiteList.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Requisições com Origin desconhecida negamos
+      return callback(new Error('Not allowed by CORS'), false);
+    },
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Remove propriedades não definidas no DTO
@@ -53,6 +84,6 @@ async function bootstrap() {
     }),
   ); // Habilita validação global
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(port);
 }
 void bootstrap();
